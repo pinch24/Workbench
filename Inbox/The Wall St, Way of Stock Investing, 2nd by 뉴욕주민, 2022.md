@@ -80,6 +80,9 @@
 ## 미국이 주식투자자의 천국인 이유
 미국 자본주의가 꽃피운 IR 문화
 
+### 미국 기업은 왜 IR 활동에 신경 쓸까
+미국 자본시장에서는 M&A나 기업분할 등의 기업활동_CAs; Corporate Actions_, 헤지펀드의 기업 인수_Corporate Takeovers_ 같은 이벤트가 잦다. 기본적으로 **경영진이 주주를 항상 의식할 수밖에 없는 환경이라 주주와의 소통에 전략적으로 임하고 책임지는 IR 문화**가 발달해 왔다. 미국은 아무리 소규모 기업도 **공시 책임자와 대변인 역할을 전담하는 사람을 명확히 지정**해둔다. 이들은 주로 **IR 책임자, CFO 그리고 고문변호사로 구성된 전담 팀**이다.  
+
 [1]:	http://www.yes24.com/Product/Goods/105981283
 
 [image-1]:	https://raw.githubusercontent.com/pinch24/Workbench/main/Inbox/The%20Wall%20St%2C%20Way%20of%20Stock%20Investing%2C%202nd%20by%20%EB%89%B4%EC%9A%95%EC%A3%BC%EB%AF%BC%2C%202022/1.1%20Sell-side%2C%20Buy-side.jpg
