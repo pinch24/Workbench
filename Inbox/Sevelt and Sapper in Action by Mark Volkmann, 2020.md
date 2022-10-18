@@ -69,7 +69,7 @@ HTML DOM은 트리 형태의 JavaScript 객체로 구성되며, 각 객체는 �
 ### 1.1.3 현재까지 알려진 스벨트의 이슈들
 
 ### 1.1.4 스벨트는 어떻게 동작하는가
-스벨트 컴파일러는 .svelte 파일을 하나의 bundle.js와 하나의 bundle.css 파일로 만든다. 가각은 오직 JavaScript와 CSS만 담고 있다.
+스벨트 컴파일러는 .svelte 파일을 하나의 bundle.js와 하나의 bundle.css 파일로 만든다. 각각은 오직 JavaScript와 CSS만 담고 있다.
 
 모든 컴포넌트에 영향을 미칠 수 있는 전역 스타일은 global.css 파일에 정의된다. 메인 HTML 파일인 index.html은 global.css 파일과 bundle.css, bundle.js 파일을 임포트한다. 그리고 웹 브라우저는 이 HTML 파일을 불러와서 애플리케이션을 실행한다.
 
@@ -151,7 +151,7 @@ Node.js를 설치하면 터미널에서 node, nom, npc 명령어를 사용할 �
 - 스벨트 네이티브는 모바일 애플리케이션을 만들 수 있는 도구다.
 
 # Chapter 2. 첫 스벨트 앱 만들기
-**REPL**은 **read, evaluate, print, loop**를 의미한다. REPL 도구는 코드를 읽어서_read_ 컴파일하거나 에러를 출력하는 등의 평가_evaluate_ 작업을 거친 다음 코드의 실행 결과를 출력_print_하고 이 과정을 반복_loop_한다.
+**REPL**은 **read, evaluate, print, loop**를 의미한다. REPL 도구는 코드를 읽어서\_read\_ 컴파일하거나 에러를 출력하는 등의 평가\_evaluate\_ 작업을 거친 다음 코드의 실행 결과를 출력\_print\_하고 이 과정을 반복\_loop\_한다.
 
 ## 2.1 스벨트 REPL
 [스벨트 REPL][7] 링크로 이동하면 기본으로 제공하는 ‘Hello World’ 앱이 열린다.
@@ -258,7 +258,7 @@ Ex. 2-1 색 입력 기능까지 추가한 REPL 앱 코드
 </style>
 ```
 
-$:가 바로 리액티브 구문_reactive statement_이다. 리액티브 구문은 해당 구문이 참조하는 변숫값이 변경되면 다시 실행된다. 리액티브 구문에서 어떤 값을 변수에 할당하는 경우를 리액티브 선언문_reactive declaration_이라고 한다.
+$:가 바로 리액티브 구문\_reactive statement\_이다. 리액티브 구문은 해당 구문이 참조하는 변숫값이 변경되면 다시 실행된다. 리액티브 구문에서 어떤 값을 변수에 할당하는 경우를 리액티브 선언문\_reactive declaration\_이라고 한다.
 
 #### Props
 `App.svelte`
@@ -304,7 +304,7 @@ $:가 바로 리액티브 구문_reactive statement_이다. 리액티브 구문�
 </div>
 ```
 
-프롭스_props_를 통해 컴포넌트에 데이터를 전달할 수 있다.
+프롭스\_props\_를 통해 컴포넌트에 데이터를 전달할 수 있다.
 스벨트는 export 키워드로 컴포넌트가 받아들일 수 있는 프롭스를 정의한다.
 
 `App.svelte`
@@ -360,9 +360,9 @@ $:가 바로 리액티브 구문_reactive statement_이다. 리액티브 구문�
 REPL에서 만든 **앱을 저장**하려면 **‘Log in to save’** 버튼을 눌러 로그인 한 다음 디스크 아이콘을 누른다.
 **저장한 앱**은 로그인 한 사용자의 프로필 아이콘에 팝업으로 나타나는 **‘Your saved apps’** 메뉴에서 확인할 수 있다.
 
-포크_fortk_ 아이콘으로 현재 앱을 복제할 수 있다.
+포크\_fortk\_ 아이콘으로 현재 앱을 복제할 수 있다.
 
-다운로드_download_ 아이콘을 누르면 svelte-app.zip 파일로 패키지를 다운로드한다.
+다운로드\_download\_ 아이콘을 누르면 svelte-app.zip 파일로 패키지를 다운로드한다.
 다운 받은 패키지는 ‘npm Install’ 후 ‘rpm run dev’ 명령으로 확인할 수 있다.
 ```bash
 ~/svelte-app/ $ npm install
@@ -429,7 +429,7 @@ Ok to proceed? (y)
 npx degit 커맨드로 스벨트 애플리케이션을 생성한다.
 
 degit는 Rich Harris가 스벨트 프로젝트의 기본 골격을 쉽게 만들기 위해 NPX 커맨드로 개발했다.
-‘de’ 접두어가 ‘\~에서 꺼낸다’라는 뜻으로 de-git는 git 저장소에서 미리 정의되어 있는 디렉토리 구조와 시작 파일들을 다운로드한다. 옵션을 지정하지 않으면 마스터 브랜치_master branch_의 내용을 가져온다.
+‘de’ 접두어가 ‘\~에서 꺼낸다’라는 뜻으로 de-git는 git 저장소에서 미리 정의되어 있는 디렉토리 구조와 시작 파일들을 다운로드한다. 옵션을 지정하지 않으면 마스터 브랜치\_master branch\_의 내용을 가져온다.
 
 npx degit sveltejs/template에서 sveltejs는 조직 이름이고 template는 저장소 이름이다.
 - sveltejs/template는 [롤업][10] 모듈 번들러를 사용한다.
