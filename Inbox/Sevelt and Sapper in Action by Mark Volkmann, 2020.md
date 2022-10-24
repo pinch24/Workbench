@@ -550,6 +550,472 @@ Dependencies 필드를 통해 스벨트 앱이 런타임에 sirv-cli만 필요�
 sirv-cli는 npm start 명령으로 실행되는 로컬 HTTP 서버이다.
 
 ### 2.2.3 중요 파일들
+스벨트 앱에서 가장 중요한 시작 파일들은 **public/index.html, src/main.js, src/App.svelte** 이다. 물론 이 파일들은 필요한 경우 수정할 수 있다.
+
+`public/index.html`
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+	<title>Svelte app</title>
+
+	<link rel='icon' type='image/png' href='/favicon.png'>
+	<link rel='stylesheet' href='/global.css'>
+	<link rel='stylesheet' href='/build/bundle.css'>
+
+	<script defer src='/build/bundle.js'></script>
+</head>
+
+<body>
+</body>
+</html>
+```
+
+index.html에는 CSS 파일 두 개와 JavaScript 파일 하나를 불러온다.
+- **global.css**에는 모든 컴포넌트에 영향을 주는 CSS가 선언되어 있다.
+- **bundle.css**에는 .svelte 파일에 정의된 각 컴포넌트에 영향을 주는 CSS가 선언되어 있다.
+- **bundle.js**에는 .svelte 파일의 정의된 각 컴포넌트에서 사용하는 JavaScript 코드가 선언되어 있다.
+
+`src/main.js`
+```js
+import App from './App.svelte';
+
+const app = new App({
+	target: document.body,
+	props: {
+		name: 'world'
+	}
+});
+
+export default app;
+```
+
+main.js는 Svelte App 컴포넌트를 화면에 그린다.
+- **target** 속성은 컴포넌트가 어디에 그려져야 하는지 지정한다.
+-  **props**로 컴포넌트에 데이터를 전달한다.  
+	데이터 전달은 App.svelte에서 정의할 수 있어서 main.js에서 props를 사용할 필요는 없다.
+
+> export default app;
+main.js는 최상위 컴포넌트의 인스턴스를 만들고 default로 export 한다.
+
+`src/App.svelte`
+```js
+<script>
+	export let name;
+</script>
+
+<main>
+	<p>Hello, world!</p>
+</main>
+
+<style>
+	main {
+		text-align: center;
+		padding: 1em;
+		max-width: 240px;
+		margin: 0 auto;
+	}
+	@media (min-width: 640px) {
+		main {
+			max-width: none;
+		}
+	}
+</style>
+```
+
+.svelte 파일은 script, main, style 요소를 가진다. 이 세 가지는 필수는 아니며 필요한 것만 기술하면 된다.
+
+각 요소의 순서는 중요하지 않지만 일반적으로 script, main, style 순서로 사용한다. 이는 각 요소가 어떤 순서로 영향을 받는지를 보여준다. 일반적으로 script는 HTML(main)에서 사용되고, HTML의 스타일은 CSS(style)에 의해 결정되기 때문이다.
+
+```js
+<script lang='ts'>
+```
+script를 TypeScript를 사용하려면 lang 속성을 ‘ts’로 지정하면 된다.
+
+```js
+<script lang='ts'>
+	export let name;
+</script>
+```
+export 키워드는 let name 변수가 props라는 것을 선언한다.
+
+### 2.2.4 로컬에서 개발하는 첫 앱
+
+# Part 2. 스벨트 파헤치기
+# Chapter 3. 컴포넌트 만들기
+
+.svelte 파일은 상태와 로직을 정의하는 JavaScript 코드, 화면을 그리기 위한 HTML, 그리고 이를 꾸미는 CSS로 이루어져 있다.
+
+컴포넌트는 밀접한 연관성을 가지는 UI 요소들의 집합이다. 컴포넌트는 특정 UI와 밀접한 데이터, 즉 ‘상태’를 관리한다. 이런 특성 때문에 컴포넌트는 재사용이 가능한 UI 구성 요소가 될 수 있다.
+
+컴포넌트는 자신을 사용하는 컴포넌트로부터 Props로 데이터를 전달받을 수 있다.
+
+컴포넌트의 상태는 각 컴포넌트 인스턴스별로 고유하다.
+컴포넌트의 로직은 이벤트 핸들링 등 컴포넌트가 어떻게 동작할지를 정의하는 함수 집합으로 구성된다.
+
+CSS 규칙은 전역으로 선언해서 모든 컴포넌트에 영향을 미칠 수 있다. 하지만 스타일 요소가 유효 범위를 가지도록 만들어지면, 스타일이 정의된 곳의 컴포넌트에만 영향을 미친다.
+
+리액티브 구문은 변수 값이 바뀔 때 코드를 다시 실행한다. 이런 리액티브 구문은 일반적으로 상태변수를 다시 계산해서 바꾸며, 그에 따라 UI의 일부가 다시 그려진다.
+
+모듈 컨텍스트를 쓰면 컴포넌트의 모든 인스턴스가 특정 내용을 공유하게 만들 수 있다.
+
+## 3.1 .svelte 파일에 담기는 것
+```js
+<script>
+	// JavaScript Codes
+</script>
+
+<!-- HTML Elements -->
+
+<style>
+	/* CSS Rules */
+</style>
+```
+
+\<script\>와 \<style\> 내에 작성되는 JavaScript 코드와 CSS 규칙은 해당 컴포넌트에 대해서만 유효하다. 다시 말해 다른 컴포넌트들은 코드를 볼 수 없다는 뜻이다. 그래서 코드나 스타일이 실수로 다른 컴포넌트에 영향을 미치는 일이 없고 디버깅도 쉬워진다.
+
+## 3.2 컴포넌트 마크업
+스벨트 컴포넌트의 인스턴스는 Props를 Childs를 전달받을 수 있다.
+Props로 컴포넌트에 데이터를 전달하고, Childs로 컴포넌트에 컨텐츠를 전달한다.
+Childs는 Text, HTML, 그 외 다른 스벨트 컴포넌트들로 구성될 수 있다.
+
+HTML Attribute는 HTML Element에 명시되는 반면, Props는 DOM에 해당하는 JavaScript Object의 Property가 된다.
+
+Props의 값은 Boolean, Numeric, String, Object, Array, Function 등 어떤 타입이 될 수도 있고 JavaScript 표현식의 값이 될 수도 있다.
+
+HTML Element로 전달되는 Props의 값이 null 또는 undefined 인 경우, 이 속성은 DOM에 추가되지 않는다.
+
+```js
+<Person fullName="{lastName}, {firstName} {middleName[0]}." />
+```
+문자열 값은 JavaScript 표현식에 따라 값을 계산하기 위해 보간`interpolate` 될 수 있다.
+문자열 내부에 있는 중괄호 표현식은 표현식 값으로 대체된다.
+
+```js
+<Person {fullName} />
+```
+Props 값을 전달하기 위해 쓰는 변수의 이름이 Props의 이름과 같은 경우 코드를 더 짧게 쓸 수 있다.
+
+```js
+<script>
+	let score = 0;
+	const scoreAttrs = {
+		type: 'number',
+		max: 10,
+		min: 0
+	};
+</script>
+<input {...scoreAttrs} bind:value={score}>
+```
+JavaScript 전개\_spread\_ 연산자는 값이 Props 값인 객체를 Props 처럼 전달할 때 쓸 수 있다.
+
+```js
+<html>
+	<head>
+		<script>
+			function log() {
+				const input = document.querySelector('input');
+				console.log('DOM prop value = ', input.value);
+				console.log('HTML attr value = ', input.getAttribute('value'));
+			}
+		</script>
+	</head>
+	<body>
+		<label>
+			Name <input value="initial" />
+		</label>
+		<button onClick="log()">Log</button>
+	</body>
+</html>
+```
+몇몇 DOM Property는 HTML Attribute에서 초기값을 가져온다. 이런 DOM Prperties는 그 값이 바뀌기도 하지만 관련된 HTML Attribute 값은 절대로 변하지 않는다. 위 코드에서 “initial”로 정의된 input 태그의 속성값을 변경하면 DOM Property 값은 변경되지만 HTML Attribute의 값은 변하지 않는다.
+
+또한 몇몇 HTML Attribute는 DOM Property로 연결되지 않기도 한다. 이를테면 table 태그 안에 쓰이는 td 태그의 colspan이 이에 해당한다.
+
+몇몇 DOM 속성은 연관된 HTML 속성이 없기도 하다. 예를 들어 DOM의 textContent Property와 연관된 HTML Attribute는 없다.
+
+이런 기술적인 내용과 무관하게 **Svelte 컴포넌트는 HTML Attribute를 가지지 않는다. 대신 Props만 가진다.**
+
+## 3.3 컴포넌트 이름
+```js
+<script>
+	import Other from './Other.svelte';
+</script>
+
+<main>
+	<Other/>
+</main>
+```
+Svelte 컴포넌트를 정의할 때는 컴포넌트 이름을 명시하지 않는다. 대신 .svelte 파일을 불러오는 경우에만 컴포넌트 이름을 명시한다. 다시 말해 불러올 때 지정한 이름이 컴포넌트 이름이 된다.
+
+컴포넌트 이름은 반드시 대문자로 시작해야 한다.
+
+일반적으로 소스 파일 이름과 컴포넌트 이름을 같게 하는 경우가 많지만, 반드시 그래야 할 필요는 없다.
+
+## 3.4 컴포넌트 스타일
+```js
+<script>
+	let status = 200;
+	let message = "This is a message.";
+</script>
+
+<main>
+	<label>
+		Status <input type="number" bind:value={ status }>
+	</label>
+
+	<div class:error={ status >= 400 }>{ message }</div>
+	<div class={ status >= 400 ? 'error' : '' }>{ message }</div>
+</main>
+
+<style>
+	.error {
+		color: red;
+		font-weight: bold;
+	}
+</style>
+```
+CSS 규칙은 HTML element에 여러 방법으로 조건부 적용할 수 있다.
+
+또 다른 방법은 같은 이름을 가지는 불리언 변수를 사용한 리액티브 선언문을 script에 추가하는 것이다.
+```js
+<script>
+	let status = 200;
+	let message = "This is a message.";
+
+	$: error = status >= 200;
+</script>
+
+<main>
+	<label>
+		Status <input type="number" bind:value={ status }>
+	</label>
+
+	<div class:error>{ message }</div>
+</main>
+
+<style>
+	.error {
+		color: red;
+		font-weight: bold;
+	}
+</style>
+```
+$: 문법은 리액티브 구문이라고 한다.
+이 구문이 참조하는 어떤 변수값이 바뀌면 해당 구문이 다시 실행된다.
+위 코드의 경우 status 변수값이 바뀌면 error 값 역시 다시 계산된다.
+
+Svelte는 CSS를 생성할 때 사용하지 않는 CSS 규칙은 자동으로 제거한다. 제거 대상이 되는 CSS 규칙은 컴포넌트에 의해 화면에 표시될 수 있는 HTML element와 일치하는 것이 하나도 없는 것이다.
+Svelte 컴파일러는 사용하지 않는 CSS 규칙에 대해서 경고 메시지를 출력한다.
+
+## 3.5 CSS 명시도
+CSS 명시도\_specificity\_는 CSS 규칙이 충돌할 때 어떤 규칙을 지정할지 결정하는 방법이다.
+
+CSS 규칙에 대한 명시도는 네 개의 숫자로 표현된다.
+- 첫 번째 숫자는 **인라인 스타일**인 경우 1, 아니면 0이다.
+- 두 번째 숫자는 지정자 안의 **id 값**이다.
+- 세 번째 숫자는 지정자 안의 **클래스 이름 갯수**이다.
+- 네 번째 숫자는 지정자 안의 **요소 이름에 대한 참조 수**이다.
+
+HTML 요소 내의 style 속성으로 지정된 CSS 규칙이 항상 가장 높은 순위를 가진다. 그다음 id 속성이 클래스 이름보다 더 중요하고, 클래스 이름은 요소 이름보다 앞선다.
+
+```js
+<script>
+	
+</script>
+
+<main>
+	<div class="parent">
+		I am the parent.
+		<div id="me" class="child" style="color:red">
+			I am the child.
+		</div>
+	</div>
+</main>
+
+<style>
+	#me {
+		color: orange;
+	}
+	.parent > .child {
+		color: yellow;
+	}
+	.parent .child {
+		color: green;
+	}
+	.child {
+		color: blue;
+	}
+	.parent {
+		color: purple;
+	}
+</style>
+```
+- .parent \> #me는 0.1.0.0이다.
+- .parent #me의 점수도 0.1.0.0이다.
+- .parent .child 점수는 0.2.0.0이며 is를 지정한 것보다 더 낮은 점수를 가진다.
+
+## 3.6 유효 범위를 가지는 스타일과 전역 스타일
+젼역 스타일은 애플리케이션의 모든 컴포넌트에 똑같이 적용되어야 하는 스타일에 적합하다.
+
+유효 범위를 가지는 스타일은 다른 컴포넌트에 영향을 주지 않고 해당 컴포넌트에만 스타일을 지정할 때 쓴다.
+
+스벨트 컴포넌트 내의 style 요소에 정의한 CSS 규칙은 해당 컴포넌트에 대해서만 유효 범위를 가지며 다른 컴포넌트에는 영향을 주지 않는다. 스타일의 유효 범위는 svelte-hash 형태로 CSS 클래스 이름을 생성하고 적용하는 방식으로 지정된다.
+
+전역 스타일을 지정하는 두 가지 방법이 있다.
+`public/global.css`
+```js
+h1 {
+	color: red;
+}
+```
+첫 번째는 public/global.css 파일에 스타일을 정의하는 것이다. 이 파일은 public/index.html 파일이 기본으로 불러오는 스타일이다.
+
+```js
+<style>
+	:global(h1) {
+		color: red;
+	}
+</style>
+```
+두 번째 방법은 컴포넌트의 style 요소 안에 :global 셀렉터로 스타일을 정의하는 것이다.
+
+전역 스타일의 CSS 속성은 컴포넌트의 style 요소가 정의하지 않은 속성에 한해 컴포넌트에 적용된다.
+
+h1 지정자를 정의하면 스벨트 컴파일러는 h1.svelte-hash 클래스 이름을 가지는 규칙으로 컴파일한다. :global(h1) 지정자를 쓰면 유효 범위가 
+```js
+<h1>Pony for sale</h1>
+<p class="description">2 year old Shetland pony</p>
+
+<style>
+	:global(h1) {
+		color: red;
+	}
+	h1 {
+		color: red;
+	}
+	.description {
+		font-style: italic;
+	}
+</style>
+```
+
+`pbulic/build/build.css`
+```js
+h1{color:red}
+h1.svelte-xp2tfb{color:green}
+.description.svelte-xp2tfb{font-style:italic}
+```
+스벨트 컴파일러는 h1.svelte-hash 클래스 이름을 가지는 규칙으로 컴파일한다. :global(h1) 지정자를 쓰면 유효 범위가 없는 규칙을 만든다.
+
+:global 수식자를 쓴 CSS 규칙의 속성은 public/global.css에 정의된 동일한 CSS 지정자의 속성값을 덮어쓴다.
+:global 수식자는 또한 하위 컴포넌트의 스타일을 덮어쓰기 위한 목적으로도 사용된다. 하위 컴포넌트 스타일을 덮어쓰려면 더 높은 명시도를 가지는 CSS 규칙을 만들어야 한다.
+:global 수식자는 반드시 CSS 지정자 목록의 처음이나 끝에만 써야 한다. 중간에 쓰는 것은 허용되지 않는다.
+
+```js
+<style>
+	.user :global(.address .city) { ... }
+</style>
+```
+:global 수식자에는 CSS 지정자 목록을 넘길 수도 있다.
+
+## 3.7 CSS 전처리기
+스벨트 모듈 번들러는 CSS 전처리기를 쓸 수 있다. CSS 전처리기는 표준 CSS에서는 지원하지 않는 사용자 정의 스타일 문법을 읽어 와서 표준 CSS로 바꾸는 일을 한다.
+
+```js
+<style lang="scss">
+```
+예를 들어 [Sass][14]를 CSS 전처리기로 사용하려면 style 요소에 lang 속성을 지정하면 된다.
+
+## 3.8 컴포넌트 로직
+컴포넌트 로직은 두 가지 방법으로 정의할 수 있다. 첫 번째는 **script 요소 내에 자바스크립트 함수**를 정의하는 것이다. 두 번째는 **HTML 요소 내에 블록 구조**를 쓰는 것이다.
+
+## 3.9 컴포넌트 상태
+script 요소 내의 지역 변수가 아닌 변수가 HTML 보간에서 참조하는 변수들은 해당 컴포넌트의 상태_state_로 간주된다. 여기서 보간은 중괄호 안에 있는 JavaScript 표현식을 의미한다. 이런 상태 변수들의 값을 변경하게 되면 해당 변수를 사용하는 보간들의 표현식이 다시 계산된다. 그리고 새로 계산된 값이 이전과 다르면 해당 DOM 부분은 업데이트 된다.
+
+## 3.10 리액티브 구문
+최상위 수준의 구문, 즉 함수 내부나 코드 블록 안에 있지 않는 구문에 달러 기호($)의 레이블로 시작하는 구문을 Svelte는 리액티브 구문으로 간주한다.
+
+JavaScript는 동일한 유효 범위 내에서 동일한 레이블 이름을 여러 번 쓰는 것을 에러로 처리하지 않는다. 그래서 리액티브 구문도 여러 번 쓸 수 있다.
+
+리액티브 구문은 해당 구문이 참조하는 변수 중 어떤 것이라도 그 값이 바뀌면 다시 실행된다.
+
+```js
+<script>
+	$: average = total / count;
+	$: console.log('count = ', count);
+</script>
+```
+위에서 첫 번째 구문은 리액티브 선언문이고 두 번째는 리액티브 구문이다.
+
+선언되지 않은 변수 앞에 $: 레이블을 붙이는 경우 Svelte는 리액티브 구문 변수 앞에 let 키워드를 삽입한다.
+
+```js
+<script>
+	$: isTeen = 13 <= age && age < 20;
+	$: upperName = name.toUpperCase();
+</script>
+```
+위와 같은 리액티브 선언문들은 아래와 같은 반응성 블록으로 대체할 수도 있다.
+```js
+<script>
+	let isTeen, upperName;
+	$: {
+		isTeen = 13 <= age && age < 20;
+		upperName = name.toUpperCase();
+	}
+</script>
+```
+
+```js
+<script>
+	$: if (someCondition) {
+		// ...
+	}
+</script>
+```
+$: 구문의 if 구문은 조건문이나 if 구문의 바디에서 참조하는 변수값이 바뀌면 다시 실행된다. 만약 조건문이 함수 호출을 포함하고 있다면 if 구문의 변수값이 바뀔 때마다 해당 함수도 다시 호출된다.
+
+```js
+<script>
+	let diameter = 1;
+	let height = 1;
+
+	$: volume = area * height;
+	$: area = Math.PI * radius ** 2;
+	$: radius = diameter / 2;
+</script>
+
+<main>
+	<h1>Cylinder Calculations</h1>
+	<label>
+		Diameter <input type="number" bind:value={ diameter }>
+	</label>
+	<label>
+		Height <input type="number" bind:value={ height }>
+	</label>
+	<label>Radius: { radius }</label>
+	<label>Area: { area.toFixed(2) }</label>
+	<label>Volume: { volume.toFixed(2) }</label>
+</main>
+
+<style>
+	input {
+		width: 50px;
+	}
+</style>
+```
+리액티브 선언문은 위상 순서에 따라 실행된다. 위 코드에서는 diameter, radius, area, volume 순서로  변경이 일어난다.
+
+리액티브 선언문은 실제 실행되는 순서와 동일하게 배치하는 것이 읽기도 편하고 이해하기도 쉽다. 위 코드의 리액티브 구문은 radius, area, volume 순서로 코드를 배치하면 이해하기 쉬워진다.
+
+Svelte는 리액티브 선언문들 사이에 순환 참조가 발생하는 것을 탐지할 수 있으며 이에 대한 에러를 표시한다.(‘Cyclical dependency detected.’)
+
+## 3.11 모듈 콘텍스트
+Svelte는 Module Context를 통해 자신을 포함하는 코드를 가리킬 수 있는 사용자 정의 script 요소 속성을 정의할 수 있다.
 
 [2]:	https://www.youtube.com/watch?v=gJ2P6hGwcgo
 [3]:	https://github.com/sveltejs/sapper
@@ -563,3 +1029,4 @@ sirv-cli는 npm start 명령으로 실행되는 로컬 HTTP 서버이다.
 [11]:	https://rollupjs.org
 [12]:	https://parceljs.org
 [13]:	https://github.com/DeMoorJasper/parcel-plugin-svelte
+[14]:	https://sass-lang.com
