@@ -934,7 +934,7 @@ h1.svelte-xp2tfb{color:green}
 컴포넌트 로직은 두 가지 방법으로 정의할 수 있다. 첫 번째는 **script 요소 내에 자바스크립트 함수**를 정의하는 것이다. 두 번째는 **HTML 요소 내에 블록 구조**를 쓰는 것이다.
 
 ## 3.9 컴포넌트 상태
-script 요소 내의 지역 변수가 아닌 변수가 HTML 보간에서 참조하는 변수들은 해당 컴포넌트의 상태_state_로 간주된다. 여기서 보간은 중괄호 안에 있는 JavaScript 표현식을 의미한다. 이런 상태 변수들의 값을 변경하게 되면 해당 변수를 사용하는 보간들의 표현식이 다시 계산된다. 그리고 새로 계산된 값이 이전과 다르면 해당 DOM 부분은 업데이트 된다.
+script 요소 내의 지역 변수가 아닌 변수가 HTML 보간에서 참조하는 변수들은 해당 컴포넌트의 상태\_state\_로 간주된다. 여기서 보간은 중괄호 안에 있는 JavaScript 표현식을 의미한다. 이런 상태 변수들의 값을 변경하게 되면 해당 변수를 사용하는 보간들의 표현식이 다시 계산된다. 그리고 새로 계산된 값이 이전과 다르면 해당 DOM 부분은 업데이트 된다.
 
 ## 3.10 리액티브 구문
 최상위 수준의 구문, 즉 함수 내부나 코드 블록 안에 있지 않는 구문에 달러 기호($)의 레이블로 시작하는 구문을 Svelte는 리액티브 구문으로 간주한다.
@@ -1014,8 +1014,56 @@ $: 구문의 if 구문은 조건문이나 if 구문의 바디에서 참조하는
 
 Svelte는 리액티브 선언문들 사이에 순환 참조가 발생하는 것을 탐지할 수 있으며 이에 대한 에러를 표시한다.(‘Cyclical dependency detected.’)
 
-## 3.11 모듈 콘텍스트
+## 3.11 모듈 컨텍스트
 Svelte는 Module Context를 통해 자신을 포함하는 코드를 가리킬 수 있는 사용자 정의 script 요소 속성을 정의할 수 있다.
+```js
+<script context="module">
+	...
+</script>
+```
+script 요소에 context를 명시하면 모듈 컨텍스트_module context_가 된다.
+script 요소에 context를 별도로 명시하지 않으면 이는 인스턴스 컨텍스트_instance context_이다.
+
+모듈 컨텍스트에서는 해당 컴포넌트의 모든 인스턴스에서 접근할 수 있는 변수와 함수를 정의할 수 있다. 모든 인스턴스에서 데이터를 공유할 수 있는 것이다. 하지만 모듈 컨텍스트에서 정의하는 변수들은 반응성이 없기 때문에 이들 변수가 바뀐다고 해서 컴포넌트가 업데이트되지는 않는다. 그리고 모듈 컨텍스트에서는 인스턴스 컨텍스트에 정의된 변수나 함수에 접근할 수 없다.
+JavaScript 코드를 인스턴스가 생성될 때마다 실행하는 것이 아니라 딱 한 번만 실행하고 싶다면 코드를 모듈 컨텍스트로 정의하면 된다.
+
+Svelte는 컴포넌트가 정의한 로컬 상태에 의존하지 않는 모든 함수는 그 선언부를 상단으로 끌어올린다.
+
+모듈 컨텍스트에 함수를 정의하면 소스 파일 바깥에서 이 함수를 불러와서 사용할 수 있다. 물론 .svelte 파일은 기본 내보내기_export_ 대상을 명시할 수 없다. Svelte는 컴포넌트를 정의하고 컴포넌트가 항상 기본 내보내기 대상이 되기 때문이다.
+
+`/src/Demo.svelte`
+```js
+<script context="module">
+	export function add(n1, n2) {
+		return n1 + n2;
+	}
+</script>
+
+<main>
+	Demo Module.
+</main>
+```
+
+`/src/App.svelte`
+```js
+<script>
+	import { onMount } from 'svelte';
+	import { add } from './Demo.svelte';
+
+	onMount(() => {
+		const sum = add(1, 3);
+		console.log("sum = ", sum);
+	});
+</script>
+
+<main>
+	Hello, world!
+</main>
+```
+
+위와 같이 구성하는 것도 가능하지만 이런 유틸리티 함수들을 정의하는 것은 .svelte 파일 보다는 .js 파일을 사용하는 것이 일반적이다.
+
+# Chapter 4. 블록 구조
 
 [2]:	https://www.youtube.com/watch?v=gJ2P6hGwcgo
 [3]:	https://github.com/sveltejs/sapper
